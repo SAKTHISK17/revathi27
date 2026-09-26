@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #222;
+            color: white;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .photo {
+            border: 2px solid #ff69b4;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #333;
+        }
+        .photo img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+        .photo-info {
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .error {
+            color: red;
+            padding: 10px;
+            text-align: center;
+        }
+        .success {
+            color: green;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gallery Debug Test</h1>
+    <p>Testing image loading from folder...</p>
+    
+    <div id="status"></div>
+    <div class="gallery" id="gallery"></div>
+
+    <script>
+        const photos = [
+            '1000218220.jpg', '1000218223.jpg', '1000218224.jpg', '1000218225.jpg', '1000218226.jpg',
+            '4X3A8131.JPG', '4X3A8136.JPG', '4X3A8258.JPG', '4X3A8268.JPG', '4X3A8271.JPG',
+            '4X3A8314.JPG', '4X3A8330.JPG', 'DEE23332.JPG', 'DEE23372.JPG',
+            'IMG_20250813_222409.jpg', 'IMG_20250813_223011.jpg', 'IMG_20250813_223704.jpg',
+            'SM247385.JPG', 'SM247500.JPG', 'SM247558.JPG', 'SM247581.JPG', 'SM247737.JPG'
+        ];
+
+        const gallery = document.getElementById('gallery');
+        const status = document.getElementById('status');
+        let loadedCount = 0;
+        let errorCount = 0;
+
+        function updateStatus() {
+            status.innerHTML = `
+                <div class="success">Loaded: ${loadedCount}</div>
+                <div class="error">Failed: ${errorCount}</div>
+                <div>Total: ${photos.length}</div>
+            `;
+        }
+
+        photos.forEach((photo, index) => {
+            const photoDiv = document.createElement('div');
+            photoDiv.className = 'photo';
+            
+            const img = document.createElement('img');
+            img.src = photo;
+            img.alt = `Photo ${index + 1}`;
+            
+            img.onload = function() {
+                loadedCount++;
+                updateStatus();
+                console.log('✅ Loaded:', photo);
+            };
+            
+            img.onerror = function() {
+                errorCount++;
+                updateStatus();
+                console.log('❌ Failed:', photo);
+                photoDiv.innerHTML = `<div class="error">Failed to load: ${photo}</div>`;
+            };
+            
+            const info = document.createElement('div');
+            info.className = 'photo-info';
+            info.textContent = photo;
+            
+            photoDiv.appendChild(img);
+            photoDiv.appendChild(info);
+            gallery.appendChild(photoDiv);
+        });
+
+        updateStatus();
+    </script>
+</body>
+</html>
